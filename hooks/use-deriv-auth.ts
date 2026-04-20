@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { DerivWebSocketManager } from "@/lib/deriv-websocket-manager"
-import { DERIV_CONFIG, DERIV_API, OAUTH_CLIENT_ID } from "@/lib/deriv-config"
-import { generateCodeVerifier, generateCodeChallenge, generateState } from "@/lib/pkce"
+import { DERIV_CONFIG } from "@/lib/deriv-config"
 
 interface Balance {
   amount: number
@@ -138,62 +137,7 @@ export function useDerivAuth() {
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    const handleOAuthCallback = async (params: URLSearchParams) => {
-      const code = params.get('code')
-      const returnedState = params.get('state')
-      const storedState = sessionStorage.getItem('oauth_state')
-      const codeVerifier = sessionStorage.getItem('pkce_code_verifier')
 
-      if (!code || !returnedState || !storedState || !codeVerifier) return
-
-      if (returnedState !== storedState) {
-        console.error("[v0] ❌ OAuth State mismatch! CSRF detected or invalid session.")
-        return
-      }
-
-      setIsInitializing(true)
-      console.log("[v0] 🔄 Exchanging OAuth code for token...")
-
-      try {
-        const response = await fetch('/api/auth/deriv-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            code,
-            code_verifier: codeVerifier,
-            redirect_uri: window.location.origin
-          })
-        })
-
-        const data = await response.json()
-        if (data.error) throw new Error(data.error)
-
-        const accessToken = data.access_token
-        console.log("[v0] 🔑 OAuth 2.0 access token received")
-
-        // Store and authorize
-        localStorage.setItem("deriv_api_token", accessToken)
-        setToken(accessToken)
-        connectWithToken(accessToken)
-
-        // Clear PKCE from session
-        sessionStorage.removeItem('pkce_code_verifier')
-        sessionStorage.removeItem('oauth_state')
-
-        // Clean URL
-        const newUrl = window.location.origin + window.location.pathname
-        window.history.replaceState({}, document.title, newUrl)
-      } catch (err: any) {
-        console.error("[v0] ❌ Token exchange failed:", err.message)
-        setIsInitializing(false)
-      }
-    }
-
-    const searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.has('code')) {
-      handleOAuthCallback(searchParams)
-      return
-    }
 
     const extractTokensFromParams = (searchStr: string): Record<string, string> => {
       // Keep legacy extraction for backward compatibility or direct token pass-through
@@ -287,43 +231,24 @@ export function useDerivAuth() {
   }
 
   const loginWithDeriv = async () => {
-    console.log("[v0] 🔐 Starting OAuth login flow...")
+    console.log("[v0] 🔐 Starting Deriv OAuth login with App ID 11383...")
     if (typeof window === "undefined") {
       console.error("[v0] ❌ OAuth: Window object not available (SSR)")
       return
     }
     
     try {
-      // Modern OAuth 2.0 PKCE Flow
-      const verifier = generateCodeVerifier()
-      const challenge = await generateCodeChallenge(verifier)
-      const state = generateState()
-
-      console.log("[v0] 🔐 PKCE verifier and challenge generated")
+      // Deriv OAuth with App ID 11383
+      // This is the legacy/direct token flow - tokens are returned directly in the redirect URL
+      // Reference: https://legacy-docs.deriv.com/docs/oauth
       
-      // Store in localStorage for later retrieval in the callback
-      localStorage.setItem('pkce_code_verifier', verifier)
-      localStorage.setItem('oauth_state', state)
-
-      // Set cookies for the callback handler
-      document.cookie = `pkce_code_verifier=${verifier}; path=/; SameSite=Lax`
-      document.cookie = `oauth_state=${state}; path=/; SameSite=Lax`
-
-      // Build OAuth redirect URI - must match pre-registered URI in Deriv app
-      const redirectUri = `${window.location.origin}/api/auth/oauth-callback`
-      const oauthUrl = new URL(DERIV_API.OAUTH)
-      
-      oauthUrl.searchParams.set('response_type', 'code')
-      oauthUrl.searchParams.set('client_id', OAUTH_CLIENT_ID)
-      oauthUrl.searchParams.set('redirect_uri', redirectUri)
-      oauthUrl.searchParams.set('scope', 'trade')
-      oauthUrl.searchParams.set('state', state)
-      oauthUrl.searchParams.set('code_challenge', challenge)
-      oauthUrl.searchParams.set('code_challenge_method', 'S256')
+      const oauthUrl = new URL('https://oauth.deriv.com/oauth2/authorize')
+      oauthUrl.searchParams.set('app_id', '11383')
+      oauthUrl.searchParams.set('l', 'en')
+      oauthUrl.searchParams.set('brand', 'deriv')
 
       console.log("[v0] 🔐 OAuth URL:", oauthUrl.toString())
-      console.log("[v0] 🔐 Redirect URI:", redirectUri)
-      console.log("[v0] 🔐 Redirecting to OAuth provider...")
+      console.log("[v0] 🔐 Redirecting to Deriv OAuth provider...")
       
       window.location.href = oauthUrl.toString()
     } catch (error) {

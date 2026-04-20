@@ -86,18 +86,17 @@ export function ApiTokenModal({ open, onSubmit, onOAuthLogin, theme = "dark" }: 
             Login with Deriv OAuth
           </Button>
           <div className={`text-xs p-2 rounded mt-2 ${theme === "dark" ? "bg-blue-500/20 border border-blue-500/30 text-blue-300" : "bg-blue-50 border border-blue-200 text-blue-700"}`}>
-            <p className="font-semibold mb-1">First-time setup required:</p>
+            <p className="font-semibold mb-1">App ID 11383 - Direct OAuth Flow:</p>
             <ol className="list-decimal list-inside space-y-1">
-              <li>Log in to Deriv</li>
-              <li>Go to Settings → API Tokens → OAuth Apps</li>
-              <li>Edit app <code className="bg-slate-800 px-1 rounded text-cyan-400">32EtOUHbr4zUOcHKwjgwj</code></li>
-              <li>Add this callback URL to "Redirect URIs":</li>
+              <li>Click "Login with Deriv OAuth" above</li>
+              <li>You will be redirected to Deriv's OAuth page</li>
+              <li>Log in with your Deriv account</li>
+              <li>Authorize the app to access your account</li>
+              <li>You will be automatically logged in</li>
             </ol>
-            <code className={`block p-1 rounded mt-1 break-all text-[9px] font-mono ${
-              theme === "dark" ? "bg-slate-900 text-cyan-300" : "bg-slate-100 text-cyan-600"
-            }`}>
-              {typeof window !== 'undefined' && `${window.location.origin}/api/auth/oauth-callback`}
-            </code>
+            <p className={`mt-2 ${theme === "dark" ? "text-blue-300" : "text-blue-700"}`}>
+              No manual OAuth configuration needed - App ID 11383 uses Deriv's public OAuth endpoints.
+            </p>
             <a
               href="https://app.deriv.com/account/api-token"
               target="_blank"

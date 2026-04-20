@@ -14,8 +14,8 @@
  * - Derivatives Base (optional): https://github.com/deriv-com/derivatives
  */
 
-export const DERIV_APP_ID = "32KGABH3pjSMkQ6JTotTG"
-export const OAUTH_CLIENT_ID = "32EtOUHbr4zUOcHKwjgwj"
+export const DERIV_APP_ID = "11383"
+export const OAUTH_CLIENT_ID = "11383"
 
 // Get redirect URL based on environment
 // This must match the pre-registered redirect URIs in the Deriv OAuth app
@@ -52,8 +52,8 @@ export const DERIV_API = {
   
   // V4 API Endpoints
   WEBSOCKET: "wss://api.derivws.com/trading/v1/options/ws/public",
-  OAUTH: "https://auth.deriv.com/oauth2/auth",
-  TOKEN: "https://auth.deriv.com/oauth2/token",
+  OAUTH: "https://oauth.deriv.com/oauth2/authorize",
+  TOKEN: "https://oauth.deriv.com/oauth2/token",
   
   // New Options API (REST)
   REST_BASE: "https://api.derivws.com",

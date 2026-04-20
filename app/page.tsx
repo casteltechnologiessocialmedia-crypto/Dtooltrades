@@ -188,15 +188,19 @@ export default function DerivAnalysisApp() {
           <div className="mx-auto w-full px-2 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 sm:h-20">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-black text-sm sm:text-base ${theme === "dark" ? "bg-blue-600 text-white" : "bg-blue-600 text-white"}`}>
-                  P
+                <div className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-bold text-base sm:text-lg transition-all duration-300 ${theme === "dark" 
+                  ? "bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40" 
+                  : "bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-400/40"}`}>
+                  <svg className="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  </svg>
                 </div>
                 <div className="flex flex-col leading-tight">
                   <h1 className={`text-base sm:text-lg font-bold tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-                    ProfitHub
+                    Profit<span className={theme === "dark" ? "text-blue-400" : "text-blue-600"}>Hub</span>
                   </h1>
-                  <h2 className={`text-[9px] sm:text-[10px] font-medium tracking-wide opacity-60 uppercase ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
-                    Trading
+                  <h2 className={`text-[8px] sm:text-[9px] font-semibold tracking-widest opacity-70 uppercase ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+                    Trading Platform
                   </h2>
                 </div>
               </div>
@@ -243,20 +247,24 @@ export default function DerivAnalysisApp() {
                } backdrop-blur-xl`}
           >
             <div className="mx-auto w-full px-2 sm:px-6 lg:px-8">
-              <div className="flex flex-nowrap items-center h-16 sm:h-20 gap-4 sm:gap-6 w-full justify-between overflow-hidden">
+              <div className="flex flex-nowrap items-center h-14 xs:h-16 sm:h-20 gap-2 xs:gap-3 sm:gap-6 w-full justify-between overflow-hidden">
 
-                {/* Brand Logo and Text - Clean Modern */}
-                <div className="flex items-center shrink-0 min-w-[140px] sm:min-w-[200px]">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-black text-sm sm:text-base ${theme === "dark" ? "bg-blue-600 text-white" : "bg-blue-600 text-white"}`}>
-                      P
+                {/* Brand Logo and Text - Premium Design */}
+                <div className="flex items-center shrink-0 min-w-[130px] xs:min-w-[150px] sm:min-w-[220px]">
+                  <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3">
+                    <div className={`relative w-9 h-9 xs:w-10 xs:h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-bold text-sm xs:text-base sm:text-lg transition-all duration-300 ${theme === "dark" 
+                      ? "bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40 hover:shadow-blue-500/60" 
+                      : "bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-400/40 hover:shadow-blue-400/60"}`}>
+                      <svg className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                      </svg>
                     </div>
                     <div className="flex flex-col leading-tight">
-                      <h1 className={`text-base sm:text-lg font-bold tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-                        ProfitHub
+                      <h1 className={`text-sm xs:text-base sm:text-lg font-bold tracking-tight ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+                        Profit<span className={theme === "dark" ? "text-blue-400" : "text-blue-600"}>Hub</span>
                       </h1>
-                      <h2 className={`text-[9px] sm:text-[10px] font-medium tracking-wide opacity-60 uppercase ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
-                        Trading
+                      <h2 className={`text-[7px] xs:text-[8px] sm:text-[9px] font-semibold tracking-widest opacity-70 uppercase letter-spacing-wider ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+                        Trading Platform
                       </h2>
                     </div>
                   </div>
@@ -265,7 +273,7 @@ export default function DerivAnalysisApp() {
                 <div className="flex-1" />
 
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                  <div className="hidden sm:flex items-center gap-2">
+                  <div className="hidden md:flex items-center gap-2">
                     <Link href="/account">
                       <Button
                         variant="ghost"
@@ -304,14 +312,14 @@ export default function DerivAnalysisApp() {
 
                   <DerivAuth theme={theme} />
 
-                  <div className="sm:hidden -ml-1">
+                  <div className="md:hidden -ml-1">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className={`h-9 w-9 rounded-lg ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
-                          <Menu className="h-5 w-5" />
+                        <Button variant="ghost" size="icon" className={`h-8 w-8 rounded-lg ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+                          <Menu className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className={`w-48 ${theme === "dark" ? "bg-[#0a0e27] border-white/10" : ""}`}>
+                      <DropdownMenuContent align="end" className={`w-40 ${theme === "dark" ? "bg-[#0a0e27] border-white/10" : ""}`}>
                         <DropdownMenuItem asChild>
                           <Link href="/account" className="flex items-center gap-2 w-full cursor-pointer p-3">
                             <User className="h-4 w-4" />
@@ -345,7 +353,6 @@ export default function DerivAnalysisApp() {
                     <div className="overflow-x-auto no-scrollbar flex">
                       <ResponsiveTabs theme={theme} value={activeTab} onValueChange={setActiveTab}>
                         {[
-                          "dashboard",
                           "smart-adaptive",
                           "smart-analysis",
                           "smartauto24",
@@ -364,7 +371,6 @@ export default function DerivAnalysisApp() {
                           "tools-info",
                         ].filter(tab => !siteConfig?.hiddenTabs?.includes(tab)).map((tab) => {
                           const tabLabels: Record<string, string> = {
-                            "dashboard": "Dashboard",
                             "smart-adaptive": "Smart Adaptive",
                             "smart-analysis": "Smart Analysis",
                             "smartauto24": "SmartAuto24",
@@ -386,7 +392,7 @@ export default function DerivAnalysisApp() {
                           <TabsTrigger
                             key={tab}
                             value={tab}
-                            className={`shrink-0 rounded-none text-[11px] sm:text-[12px] h-11 sm:h-12 px-4 sm:px-6 whitespace-nowrap transition-all duration-300 font-semibold border-b-2 ${activeTab === tab
+                            className={`shrink-0 rounded-none text-[9px] xs:text-[10px] sm:text-[12px] h-9 xs:h-10 sm:h-12 px-2 xs:px-3 sm:px-6 whitespace-nowrap transition-all duration-300 font-semibold border-b-2 ${activeTab === tab
                               ? theme === "dark"
                                 ? "border-blue-500 text-blue-500 bg-blue-500/10"
                                 : "border-blue-600 text-blue-600 bg-blue-100/50"
@@ -408,20 +414,20 @@ export default function DerivAnalysisApp() {
                 </div>
 
                 {/* 2. Balanced HUD Row - Dashboard Grid Style */}
-                <div className="flex items-center justify-center w-full px-1">
-                  <div className={`p-0.5 sm:p-1 rounded-xl sm:rounded-2xl border ${theme === "dark" ? "bg-[#050505]/60 border-white/5 shadow-2xl" : "bg-white/50 border-gray-100 shadow-xl"} backdrop-blur-2xl w-full sm:w-auto`}>
-                    <div className="flex flex-nowrap items-center justify-center gap-0.5 sm:gap-2.5 overflow-x-auto no-scrollbar py-0.5 px-0.5">
+                <div className="flex items-center justify-center w-full px-0.5 xs:px-1">
+                  <div className={`p-0.25 xs:p-0.5 sm:p-1 rounded-lg xs:rounded-xl sm:rounded-2xl border ${theme === "dark" ? "bg-[#050505]/60 border-white/5 shadow-2xl" : "bg-white/50 border-gray-100 shadow-xl"} backdrop-blur-2xl w-full xs:w-auto`}>
+                    <div className="flex flex-nowrap items-center justify-center gap-0.25 xs:gap-1.5 sm:gap-2.5 overflow-x-auto no-scrollbar py-0.25 xs:py-0.5 px-0.25 xs:px-0.5">
                       
                       {/* 1. Market Selection Tile */}
                       {availableSymbols.length > 0 && (
-                        <div className={`flex flex-col items-center justify-center min-w-[110px] sm:min-w-[170px] h-9 sm:h-11 rounded-lg sm:rounded-xl border transition-all ${theme === "dark"
+                        <div className={`flex flex-col items-center justify-center min-w-[85px] xs:min-w-[110px] sm:min-w-[170px] h-8 xs:h-9 sm:h-11 rounded-md xs:rounded-lg sm:rounded-xl border transition-all ${theme === "dark"
                           ? "bg-white/[0.03] border-white/10 shadow-inner"
                           : "bg-gray-50 border-gray-200 shadow-xs"
                           }`}>
-                          <span className={`text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.18em] mb-0 opacity-70 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
-                            Market Selection
+                          <span className={`text-[6px] xs:text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.15em] mb-0 opacity-70 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
+                            Market
                           </span>
-                          <div className="w-full flex items-center justify-center scale-[0.85] sm:scale-100 origin-center -mt-0.5 sm:mt-0">
+                          <div className="w-full flex items-center justify-center scale-[0.75] xs:scale-[0.85] sm:scale-100 origin-center -mt-1 xs:-mt-0.5 sm:mt-0">
                             <MarketSelector
                               symbols={availableSymbols}
                               currentSymbol={symbol}
@@ -433,49 +439,49 @@ export default function DerivAnalysisApp() {
                       )}
 
                       {/* 2. Price Tile */}
-                      <div className={`flex flex-col items-center justify-center min-w-[75px] sm:min-w-[140px] h-9 sm:h-11 rounded-lg sm:rounded-xl border ${theme === "dark"
+                      <div className={`flex flex-col items-center justify-center min-w-[55px] xs:min-w-[75px] sm:min-w-[140px] h-8 xs:h-9 sm:h-11 rounded-md xs:rounded-lg sm:rounded-xl border ${theme === "dark"
                         ? "bg-white/[0.03] border-white/10 shadow-inner"
                         : "bg-gray-50 border-gray-200 shadow-xs"
                         }`}>
-                        <span className={`text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.18em] mb-0 opacity-70 ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
+                        <span className={`text-[6px] xs:text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.15em] mb-0 opacity-70 ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
                           Price
                         </span>
-                        <span className={`text-[11px] sm:text-[16px] font-black tabular-nums leading-none ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
+                        <span className={`text-[9px] xs:text-[11px] sm:text-[16px] font-black tabular-nums leading-none ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
                           {currentPrice?.toFixed(2) || "0.00"}
                         </span>
                       </div>
 
                       {/* 3. Last Digit Tile */}
-                      <div className={`flex flex-col items-center justify-center min-w-[55px] sm:min-w-[110px] h-9 sm:h-11 rounded-lg sm:rounded-xl border relative overflow-hidden transition-all duration-300 ${theme === "dark"
+                      <div className={`flex flex-col items-center justify-center min-w-[48px] xs:min-w-[55px] sm:min-w-[110px] h-8 xs:h-9 sm:h-11 rounded-md xs:rounded-lg sm:rounded-xl border relative overflow-hidden transition-all duration-300 ${theme === "dark"
                         ? "bg-orange-500/[0.08] border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.12)]"
                         : "bg-orange-50 border-orange-200"
                         }`}>
                         <div className="absolute inset-0 bg-gradient-to-t from-orange-500/[0.05] to-transparent animate-pulse pointer-events-none" />
-                        <span className={`text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.18em] mb-0 relative z-10 opacity-70 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}>
-                          Last Digit
+                        <span className={`text-[6px] xs:text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.15em] mb-0 relative z-10 opacity-70 ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}>
+                          Digit
                         </span>
-                        <span className={`text-[15px] sm:text-[22px] font-black relative z-10 leading-none ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}>
+                        <span className={`text-[12px] xs:text-[15px] sm:text-[22px] font-black relative z-10 leading-none ${theme === "dark" ? "text-orange-400" : "text-orange-600"}`}>
                           {currentDigit ?? "0"}
                         </span>
                       </div>
 
                       {/* 4. Ticks Tile */}
-                      <div className={`flex flex-col items-center justify-center min-w-[75px] sm:min-w-[140px] h-9 sm:h-11 rounded-lg sm:rounded-xl border ${theme === "dark"
+                      <div className={`flex flex-col items-center justify-center min-w-[55px] xs:min-w-[75px] sm:min-w-[140px] h-8 xs:h-9 sm:h-11 rounded-md xs:rounded-lg sm:rounded-xl border ${theme === "dark"
                         ? "bg-white/[0.03] border-white/10 shadow-inner"
                         : "bg-gray-50 border-gray-200 shadow-xs"
                         }`}>
-                        <span className={`text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.18em] mb-0 opacity-70 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>
+                        <span className={`text-[6px] xs:text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.15em] mb-0 opacity-70 ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>
                           Ticks
                         </span>
-                        <div className="flex items-center gap-1 sm:gap-1.5 h-4 sm:h-5">
-                          <span className={`text-[11px] sm:text-[15px] font-black tabular-nums tracking-tight ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>
+                        <div className="flex items-center gap-0.5 xs:gap-1 sm:gap-1.5 h-3 xs:h-4 sm:h-5">
+                          <span className={`text-[8px] xs:text-[11px] sm:text-[15px] font-black tabular-nums tracking-tight ${theme === "dark" ? "text-emerald-400" : "text-emerald-600"}`}>
                             {(tickCount || 0).toLocaleString()}
                           </span>
-                          <div className={`h-3 w-px ${theme === "dark" ? "bg-white/20" : "bg-gray-300"}`} />
+                          <div className={`h-2 xs:h-3 w-px ${theme === "dark" ? "bg-white/20" : "bg-gray-300"}`} />
                           <select
                             value={maxTicks}
                             onChange={(e) => changeMaxTicks(Number(e.target.value))}
-                            className={`bg-transparent text-[9px] sm:text-[11px] font-black focus:outline-hidden cursor-pointer appearance-none ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+                            className={`bg-transparent text-[7px] xs:text-[9px] sm:text-[11px] font-black focus:outline-hidden cursor-pointer appearance-none ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
                           >
                             {[25, 60, 100, 250, 500, 1000, 2500, 5000].map(v => (
                               <option key={v} value={v} className={theme === "dark" ? "bg-slate-900 text-white" : "bg-white text-slate-900"}>{v}</option>
@@ -543,10 +549,6 @@ export default function DerivAnalysisApp() {
                   Reconnecting to Deriv API... Some data may be delayed.
                 </div>
               )}
-              <TabsContent value="dashboard" className="mt-0">
-                <DashboardTab theme={theme} />
-              </TabsContent>
-
               <TabsContent value="smart-analysis" className="mt-0 space-y-2 sm:space-y-3 md:space-y-4">
                 <div
                   className={`rounded-lg sm:rounded-xl p-2 sm:p-3 border flex items-center justify-between ${theme === "dark" ? "bg-linear-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20 shadow-[0_0_30px_rgba(59,130,246,0.2)]" : "bg-white border-gray-200 shadow-lg"}`}

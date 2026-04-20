@@ -1,128 +1,108 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
- * OAuth 2.0 Callback Handler for Deriv
- * This endpoint receives the authorization code from Deriv's OAuth provider
- * and exchanges it for an access token using the PKCE code verifier
+ * OAuth Callback Handler for Deriv App ID 11383
+ * 
+ * Handles redirect from https://oauth.deriv.com/oauth2/authorize?app_id=11383
+ * 
+ * Deriv's OAuth returns user tokens directly in the redirect URL:
+ * ?acct1=XXXXX&token1=XXXXX&acct2=YYYYY&token2=YYYYY&cur1=USD&cur2=EUR&...
+ * 
+ * Reference: https://legacy-docs.deriv.com/docs/oauth
  */
-
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const code = searchParams.get('code')
-    const state = searchParams.get('state')
+    
+    // Extract OAuth error if present
     const error = searchParams.get('error')
     const errorDescription = searchParams.get('error_description')
-
-    console.log('[v0] OAuth Callback received:', { code, state, error })
-
-    // Handle OAuth errors
+    
     if (error) {
       console.error('[v0] OAuth Error:', error, errorDescription)
-      return NextResponse.redirect(
-        new URL(
-          `/auth-error?error=${encodeURIComponent(error)}&description=${encodeURIComponent(errorDescription || '')}`,
-          request.nextUrl.origin
-        )
-      )
+      const redirectUrl = new URL('/', request.nextUrl.origin)
+      redirectUrl.searchParams.set('error', error)
+      redirectUrl.searchParams.set('error_description', errorDescription || 'OAuth authorization failed')
+      return NextResponse.redirect(redirectUrl)
     }
-
-    // Validate required parameters
-    if (!code) {
-      console.error('[v0] OAuth callback missing authorization code')
-      return NextResponse.redirect(
-        new URL(
-          '/auth-error?error=missing_code&description=Authorization%20code%20not%20received',
-          request.nextUrl.origin
-        )
-      )
+    
+    // Extract OAuth code (for future PKCE flow)
+    const code = searchParams.get('code')
+    if (code) {
+      console.log('[v0] OAuth code received, processing...')
+      // Redirect to home with code for client-side handling
+      const redirectUrl = new URL('/', request.nextUrl.origin)
+      redirectUrl.searchParams.set('code', code)
+      redirectUrl.searchParams.set('state', searchParams.get('state') || '')
+      return NextResponse.redirect(redirectUrl)
     }
-
-    // Validate state parameter for CSRF protection
-    if (typeof window === 'undefined') {
-      const sessionState = request.cookies.get('oauth_state')?.value
-      if (!state || state !== sessionState) {
-        console.error('[v0] OAuth state mismatch - possible CSRF attack')
-        return NextResponse.redirect(
-          new URL(
-            '/auth-error?error=state_mismatch&description=OAuth%20state%20validation%20failed',
-            request.nextUrl.origin
-          )
-        )
+    
+    // Extract legacy token parameters (app_id=11383 returns these directly)
+    // Format: ?acct1=XXXXX&token1=XXXXX&cur1=USD&acct2=YYYYY&token2=YYYYY&cur2=EUR...
+    const tokens: Record<string, string> = {}
+    const accountTypes: Record<string, string> = {}
+    let primaryToken = ""
+    let primaryAcct = ""
+    
+    for (let i = 1; i <= 20; i++) {
+      const acct = searchParams.get(`acct${i}`)
+      const token = searchParams.get(`token${i}`)
+      const cur = searchParams.get(`cur${i}`)
+      
+      if (acct && token) {
+        tokens[acct] = token
+        if (cur) accountTypes[acct] = cur
+        
+        if (i === 1) {
+          primaryToken = token
+          primaryAcct = acct
+        }
       }
     }
-
-    // Exchange authorization code for access token
-    // This is done in a separate server action to keep the client_secret secure
-    const response = await fetch('https://auth.deriv.com/oauth2/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code,
-        client_id: process.env.NEXT_PUBLIC_DERIV_OAUTH_CLIENT_ID || '32EtOUHbr4zUOcHKwjgwj',
-        redirect_uri: `${request.nextUrl.origin}/api/auth/oauth-callback`,
-        code_verifier: request.cookies.get('pkce_code_verifier')?.value || '',
-      }).toString(),
-    })
-
-    if (!response.ok) {
-      const errorData = await response.text()
-      console.error('[v0] Token exchange failed:', response.status, errorData)
-      return NextResponse.redirect(
-        new URL(
-          `/auth-error?error=token_exchange_failed&description=${encodeURIComponent(errorData)}`,
-          request.nextUrl.origin
-        )
-      )
+    
+    if (Object.keys(tokens).length === 0) {
+      console.warn('[v0] OAuth callback received but no tokens found in parameters')
+      return NextResponse.redirect(new URL('/', request.nextUrl.origin))
     }
-
-    const tokenData = await response.json()
-
-    console.log('[v0] OAuth token exchange successful')
-
-    // Store the access token in an HTTP-only cookie
-    const response_with_cookie = NextResponse.redirect(
-      new URL('/dashboard', request.nextUrl.origin)
-    )
-
-    response_with_cookie.cookies.set({
-      name: 'deriv_access_token',
-      value: tokenData.access_token,
+    
+    console.log('[v0] OAuth tokens received for', Object.keys(tokens).length, 'account(s)')
+    
+    // Redirect to home with tokens in search params
+    const redirectUrl = new URL('/', request.nextUrl.origin)
+    
+    let accountIndex = 1
+    for (const [acct, token] of Object.entries(tokens)) {
+      redirectUrl.searchParams.set(`acct${accountIndex}`, acct)
+      redirectUrl.searchParams.set(`token${accountIndex}`, token)
+      if (accountTypes[acct]) {
+        redirectUrl.searchParams.set(`cur${accountIndex}`, accountTypes[acct])
+      }
+      accountIndex++
+    }
+    
+    // Set HTTP-only cookie for primary token (for server-side access if needed)
+    const response = NextResponse.redirect(redirectUrl)
+    response.cookies.set('deriv_api_token', primaryToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: tokenData.expires_in || 86400, // Default 24 hours
+      maxAge: 60 * 60 * 24 * 365, // 1 year
       path: '/',
     })
-
-    // Store user info if available
-    if (tokenData.user_id) {
-      response_with_cookie.cookies.set({
-        name: 'deriv_user_id',
-        value: tokenData.user_id.toString(),
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 86400,
-        path: '/',
-      })
-    }
-
-    // Clear OAuth state and PKCE verifier
-    response_with_cookie.cookies.delete('oauth_state')
-    response_with_cookie.cookies.delete('pkce_code_verifier')
-
-    return response_with_cookie
+    
+    // Store all tokens in a non-HTTPOnly cookie for client-side access
+    response.cookies.set('deriv_auth_tokens', JSON.stringify(tokens), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      path: '/',
+    })
+    
+    return response
+    
   } catch (error) {
     console.error('[v0] OAuth callback error:', error)
-    return NextResponse.redirect(
-      new URL(
-        `/auth-error?error=server_error&description=${encodeURIComponent(error instanceof Error ? error.message : 'Unknown error')}`,
-        request.nextUrl.origin
-      )
-    )
+    return NextResponse.redirect(new URL('/', request.nextUrl.origin))
   }
 }

@@ -183,43 +183,80 @@ export function OverUnderTab({
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-5">
             <OverUnderAnalyzer ticks={analysisDigits} currentPrice={currentPrice} theme={theme} />
 
             <div
-                className={`rounded-xl p-6 border ${theme === "dark"
+                className={`rounded-xl p-6 sm:p-8 border ${theme === "dark"
                     ? "bg-gradient-to-br from-[#0a0e27] to-[#0f1535] border-blue-500/20"
                     : "bg-white border-gray-200"
                     }`}
             >
-                <h3 className={`text-xl font-bold mb-4 text-center ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                    Under (0-4) / Over (5-9) Analysis
-                </h3>
+                <div className="text-center mb-4">
+                    <h3 className={`text-xl sm:text-2xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                        Over/Under Analysis (Selected: {selectedDigit})
+                    </h3>
+                    <Badge
+                        className={`text-sm px-4 py-1.5 font-semibold ${
+                            signalStatus === "TRADE NOW"
+                                ? "bg-green-500/30 text-green-300 border border-green-500/50"
+                                : signalStatus === "WAIT"
+                                    ? "bg-yellow-500/30 text-yellow-300 border border-yellow-500/50"
+                                    : "bg-gray-500/30 text-gray-300 border border-gray-500/50"
+                        }`}
+                    >
+                        {signalStatus}
+                    </Badge>
+                </div>
 
-                <div className="grid grid-cols-2 gap-6 mb-6">
-                    <div className={`p-4 rounded-lg ${theme === "dark" ? "bg-blue-900/30" : "bg-blue-50"}`}>
-                        <div className={`text-lg font-bold mb-2 ${theme === "dark" ? "text-blue-300" : "text-blue-800"}`}>
-                            Under (0-4)
-                        </div>
-                        <div className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-8">
+                    {/* Under Card */}
+                    <div className="flex flex-col items-center">
+                        <div className={`text-4xl sm:text-5xl font-black mb-2 ${theme === "dark" ? "text-cyan-400" : "text-cyan-600"}`}>
                             {underPercent.toFixed(1)}%
                         </div>
-                        <div className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                            Highest: Digit {highestUnder.digit} ({highestUnder.count}x)
+                        <div className={`text-sm font-semibold mb-3 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                            Under (0, 1, 2, 3, 4) {underPercent > overPercent ? "↗" : underPercent < overPercent ? "↘" : "→"}
+                        </div>
+                        <div className={`w-full max-w-xs rounded-full h-3 mb-3 ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
+                            <div
+                                className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all"
+                                style={{ width: `${Math.min(underPercent, 100)}%` }}
+                            />
+                        </div>
+                        <div className={`text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            Count: {recentDigits.filter((d) => d >= 0 && d <= 4).length} | Strongest: {highestUnder.digit}
                         </div>
                     </div>
 
-                    <div className={`p-4 rounded-lg ${theme === "dark" ? "bg-green-900/30" : "bg-green-50"}`}>
-                        <div className={`text-lg font-bold mb-2 ${theme === "dark" ? "text-green-300" : "text-green-800"}`}>
-                            Over (5-9)
-                        </div>
-                        <div className={`text-4xl font-bold mb-2 ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
+                    {/* Over Card */}
+                    <div className="flex flex-col items-center">
+                        <div className={`text-4xl sm:text-5xl font-black mb-2 ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
                             {overPercent.toFixed(1)}%
                         </div>
-                        <div className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                            Highest: Digit {highestOver.digit} ({highestOver.count}x)
+                        <div className={`text-sm font-semibold mb-3 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                            Over (5, 6, 7, 8, 9) {overPercent > underPercent ? "↗" : overPercent < underPercent ? "↘" : "→"}
+                        </div>
+                        <div className={`w-full max-w-xs rounded-full h-3 mb-3 ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
+                            <div
+                                className="h-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all"
+                                style={{ width: `${Math.min(overPercent, 100)}%` }}
+                            />
+                        </div>
+                        <div className={`text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            Count: {recentDigits.filter((d) => d >= 5 && d <= 9).length} | Strongest: {highestOver.digit}
                         </div>
                     </div>
+                </div>
+
+                {/* Entry Conditions */}
+                <div className="text-center border-t border-white/10 pt-6">
+                    <h4 className={`text-sm font-bold mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-700"}`}>
+                        Entry Conditions:
+                    </h4>
+                    <p className={`text-sm ${theme === "dark" ? "text-cyan-300" : "text-cyan-600"}`}>
+                        {signalMessage}
+                    </p>
                 </div>
             </div>
 

@@ -296,154 +296,94 @@ export function MoneyMakerTab({ theme = "dark", recentDigits = [] }: MoneyMakerT
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5">
       {/* Header */}
       <div
-        className={`rounded-xl p-4 sm:p-6 border ${
+        className={`rounded-xl p-6 sm:p-8 border ${
           theme === "dark"
             ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
             : "bg-white border-gray-200"
         }`}
       >
-        <h2
-          className={`text-2xl sm:text-3xl font-bold text-center mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
-        >
-          💰 Money Maker - Deep Statistical Analysis
-        </h2>
+        <div className="text-center mb-6">
+          <h2
+            className={`text-xl sm:text-2xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+          >
+            Advanced Over/Under Analysis
+          </h2>
 
-        {/* Signal Display */}
-        <div className="flex justify-center mb-6">
+          {/* Signal Display */}
           <Badge
-            className={`text-lg px-6 py-3 font-bold animate-pulse ${
+            className={`text-sm px-4 py-1.5 font-semibold animate-pulse ${
               signal.status === "RUN NOW"
-                ? "bg-orange-500/30 text-orange-300 border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.6)]"
+                ? "bg-orange-500/30 text-orange-300 border border-orange-500/50 shadow-[0_0_20px_rgba(249,115,22,0.6)]"
                 : signal.status === "READY"
-                  ? "bg-cyan-500/30 text-cyan-300 border-cyan-500/50"
+                  ? "bg-cyan-500/30 text-cyan-300 border border-cyan-500/50"
                   : signal.status === "WAIT"
-                    ? "bg-yellow-500/30 text-yellow-300 border-yellow-500/50"
+                    ? "bg-yellow-500/30 text-yellow-300 border border-yellow-500/50"
                     : signal.status === "TRADING"
-                      ? "bg-green-500/30 text-green-300 border-green-500/50"
+                      ? "bg-green-500/30 text-green-300 border border-green-500/50"
                       : signal.status === "EXIT"
-                        ? "bg-red-500/30 text-red-300 border-red-500/50"
-                        : "bg-gray-500/30 text-gray-300 border-gray-500/50"
+                        ? "bg-red-500/30 text-red-300 border border-red-500/50"
+                        : "bg-gray-500/30 text-gray-300 border border-gray-500/50"
             }`}
           >
             {signal.status}
-            {signal.status === "RUN NOW" && ` - Confidence: ${signal.confidence.toFixed(0)}%`}
-            {signal.status === "TRADING" && ` - ${signal.tradingTicksRemaining} ticks remaining`}
+            {signal.status === "RUN NOW" && ` - ${signal.confidence.toFixed(0)}%`}
+            {signal.status === "TRADING" && ` - ${signal.tradingTicksRemaining}s`}
           </Badge>
         </div>
-      </div>
 
-      {/* Market Analysis */}
-      <div
-        className={`rounded-xl p-4 sm:p-6 border grid grid-cols-1 md:grid-cols-2 gap-6 ${
-          theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-blue-500/20"
-            : "bg-white border-gray-200"
-        }`}
-      >
-        {/* Under Analysis */}
-        <div className="space-y-4">
-          <div className="text-center">
-            <div className="text-5xl sm:text-6xl font-bold text-blue-400 mb-2">{analysis.underPercent.toFixed(1)}%</div>
-            <div className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-              Under (0-4) {analysis.underIncreasing ? "↗" : "↘"}
+        {/* Market Analysis */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+          {/* Under Card */}
+          <div className="flex flex-col items-center">
+            <div className={`text-4xl sm:text-5xl font-black mb-2 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
+              {analysis.underPercent.toFixed(1)}%
             </div>
-            <div className={`text-sm mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-              Strongest Digit: {analysis.strongestUnder}
+            <div className={`text-sm font-semibold mb-3 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+              Under (0, 1, 2, 3, 4) {analysis.underIncreasing ? "↗" : analysis.underIncreasing === false ? "↘" : "→"}
+            </div>
+            <div className={`w-full max-w-xs rounded-full h-3 mb-3 ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all"
+                style={{ width: `${Math.min(analysis.underPercent, 100)}%` }}
+              />
+            </div>
+            <div className={`text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              Count: {Math.round(analysis.underPercent * analysisDigits.length / 100)} | Strongest: {analysis.strongestUnder}
             </div>
           </div>
-          <div className="h-8 bg-gray-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-300"
-              style={{ width: `${analysis.underPercent}%` }}
-            />
-          </div>
 
-          {/* Under Predictions */}
-          {analysis.underPredictions.length > 0 && (
-            <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/30">
-              <p className="text-xs font-semibold text-blue-300 mb-2">Predicted Under Contracts:</p>
-              <div className="flex flex-wrap gap-2">
-                {analysis.underPredictions.map((pred) => (
-                  <Badge key={pred} className="bg-blue-500/30 text-blue-300 border-blue-500/50">
-                    {pred}
-                  </Badge>
-                ))}
-              </div>
+          {/* Over Card */}
+          <div className="flex flex-col items-center">
+            <div className={`text-4xl sm:text-5xl font-black mb-2 ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
+              {analysis.overPercent.toFixed(1)}%
             </div>
-          )}
+            <div className={`text-sm font-semibold mb-3 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+              Over (5, 6, 7, 8, 9) {analysis.overIncreasing ? "↗" : analysis.overIncreasing === false ? "↘" : "→"}
+            </div>
+            <div className={`w-full max-w-xs rounded-full h-3 mb-3 ${theme === "dark" ? "bg-gray-700" : "bg-gray-200"}`}>
+              <div
+                className="h-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all"
+                style={{ width: `${Math.min(analysis.overPercent, 100)}%` }}
+              />
+            </div>
+            <div className={`text-xs font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              Count: {Math.round(analysis.overPercent * analysisDigits.length / 100)} | Strongest: {analysis.strongestOver}
+            </div>
+          </div>
         </div>
 
-        {/* Over Analysis */}
-        <div className="space-y-4">
-          <div className="text-center">
-            <div className="text-5xl sm:text-6xl font-bold text-green-400 mb-2">{analysis.overPercent.toFixed(1)}%</div>
-            <div className={`text-lg font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-              Over (5-9) {analysis.overIncreasing ? "↗" : "↘"}
-            </div>
-            <div className={`text-sm mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-              Strongest Digit: {analysis.strongestOver}
-            </div>
-          </div>
-          <div className="h-8 bg-gray-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-300"
-              style={{ width: `${analysis.overPercent}%` }}
-            />
-          </div>
-
-          {/* Over Predictions */}
-          {analysis.overPredictions.length > 0 && (
-            <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/30">
-              <p className="text-xs font-semibold text-green-300 mb-2">Predicted Over Contracts:</p>
-              <div className="flex flex-wrap gap-2">
-                {analysis.overPredictions.map((pred) => (
-                  <Badge key={pred} className="bg-green-500/30 text-green-300 border-green-500/50">
-                    {pred}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
+        {/* Entry Conditions */}
+        <div className="text-center border-t border-white/10 pt-6">
+          <h4 className={`text-sm font-bold mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-700"}`}>
+            Entry Conditions:
+          </h4>
+          <p className={`text-sm ${theme === "dark" ? "text-cyan-300" : "text-cyan-600"}`}>
+            {analysis.underPercent > 55 ? `Strong UNDER signal at ${analysis.underPercent.toFixed(1)}%` : analysis.overPercent > 55 ? `Strong OVER signal at ${analysis.overPercent.toFixed(1)}%` : "Wait for market to show clear direction (55%+ and increasing)"}
+          </p>
         </div>
-      </div>
-
-      {/* Market Metrics */}
-      <div
-        className={`rounded-xl p-4 sm:p-6 border grid grid-cols-3 gap-4 ${
-          theme === "dark"
-            ? "bg-gradient-to-br from-[#0f1629]/80 to-[#1a2235]/80 border-purple-500/20"
-            : "bg-white border-gray-200"
-        }`}
-      >
-        <Card
-          className={`p-3 text-center ${theme === "dark" ? "bg-purple-500/10 border-purple-500/30" : "bg-purple-50 border-purple-200"}`}
-        >
-          <p className={`text-xs font-semibold mb-1 ${theme === "dark" ? "text-purple-300" : "text-purple-700"}`}>
-            Market Power
-          </p>
-          <p className="text-2xl font-bold text-purple-400">{analysis.marketPower.toFixed(1)}%</p>
-        </Card>
-        <Card
-          className={`p-3 text-center ${theme === "dark" ? "bg-yellow-500/10 border-yellow-500/30" : "bg-yellow-50 border-yellow-200"}`}
-        >
-          <p className={`text-xs font-semibold mb-1 ${theme === "dark" ? "text-yellow-300" : "text-yellow-700"}`}>
-            Volatility
-          </p>
-          <p className={`text-2xl font-bold ${analysis.volatility > 20 ? "text-red-400" : "text-green-400"}`}>
-            {analysis.volatility.toFixed(1)}%
-          </p>
-        </Card>
-        <Card
-          className={`p-3 text-center ${theme === "dark" ? "bg-blue-500/10 border-blue-500/30" : "bg-blue-50 border-blue-200"}`}
-        >
-          <p className={`text-xs font-semibold mb-1 ${theme === "dark" ? "text-blue-300" : "text-blue-700"}`}>
-            Confirmed Ticks
-          </p>
-          <p className="text-2xl font-bold text-blue-400">{signal.confirmedTicks}</p>
-        </Card>
       </div>
 
       {/* Action Buttons */}
